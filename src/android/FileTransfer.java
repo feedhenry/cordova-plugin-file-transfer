@@ -321,7 +321,21 @@ public class FileTransfer extends CordovaPlugin {
                     conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + BOUNDARY);
 
                     // Set the cookies on the response
-                    String cookie = CookieManager.getInstance().getCookie(target);
+                    //Changed by FeedHenry: allow cookie to be passed in the parameters
+                    String cookie = null;
+                    try{
+                      if(params.has("__cookie")){
+                        cookie = params.getString("__cookie");
+                        params.remove("__cookie");
+                      }
+                    }catch(JSONException e){
+                      Log.e(LOG_TAG, e.getMessage(), e);
+                    }
+                    
+                    if(null == cookie){
+                      cookie = CookieManager.getInstance().getCookie(target);
+                    }
+                    
                     if (cookie != null) {
                         conn.setRequestProperty("Cookie", cookie);
                     }
